@@ -1,0 +1,65 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }}</a>
+    <span>›</span>
+    <span>{{ page.dong }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏘️ {{ page.sigungu }} {{ page.dong }} 빌라·오피스텔 실거래가</h1>
+    <p>건물 {{ page.nTotal }}곳(빌라 {{ page.nVilla }} · 오피스텔 {{ page.nOffi }}) · 중앙 매매가 {{ page.stat.median }} · 평균 전세가율 {{ page.stat.ratio }}</p>
+  </div>
+
+  <p class="summary-p">{{ page.summary }}</p>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  {% if page.villaRows.size > 0 %}
+  <h2 class="group-title">🏘️ {{ page.dong }} 빌라(연립·다세대) <small style="font-weight:500;color:#6B7280;">거래 많은 순</small></h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>건물</th><th>준공</th><th>매매(3년)</th><th>전월세(2년)</th><th>대표 평형 평균 매매가</th><th>전세가율</th><th>최근 거래</th></tr></thead>
+    <tbody>{% for r in page.villaRows %}<tr><td>{% if r.url %}<a href="{{ r.url }}">{{ r.name }}</a>{% else %}{{ r.name }}{% endif %}<br><small style="color:#6B7280;">{{ r.ht }} · {{ r.jibun }}</small></td><td>{% if r.by > 0 %}{{ r.by }}년{% else %}-{% endif %}</td><td>{{ r.n }}건</td><td>{{ r.nr }}건</td><td>{{ r.rep }}</td><td>{{ r.ratio }}</td><td>{{ r.last }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.offiRows.size > 0 %}
+  <h2 class="group-title">🏢 {{ page.dong }} 오피스텔 <small style="font-weight:500;color:#6B7280;">거래 많은 순</small></h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>건물</th><th>준공</th><th>매매(3년)</th><th>전월세(2년)</th><th>대표 평형 평균 매매가</th><th>전세가율</th><th>최근 거래</th></tr></thead>
+    <tbody>{% for r in page.offiRows %}<tr><td>{% if r.url %}<a href="{{ r.url }}">{{ r.name }}</a>{% else %}{{ r.name }}{% endif %}<br><small style="color:#6B7280;">{{ r.jibun }}</small></td><td>{% if r.by > 0 %}{{ r.by }}년{% else %}-{% endif %}</td><td>{{ r.n }}건</td><td>{{ r.nr }}건</td><td>{{ r.rep }}</td><td>{{ r.ratio }}</td><td>{{ r.last }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.neighbors.size > 0 %}
+  <h2 class="group-title">📍 {{ page.sigungu }} 다른 동네</h2>
+  <div class="chip-row">
+    {% for n in page.neighbors %}<a class="chip" href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/{{ n.name | uri_escape }}/">{{ n.name }}<em>{{ n.n }}</em></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% include faq.html %}
+
+  <div class="tip-box">
+    <h2>{{ page.dong }} 실거래가 안내</h2>
+    <p>최근 거래 반영일은 {{ page.latest }}입니다. 표의 대표 평형은 최근 3년간 거래가 가장 많은 전용면적이며, 거래가 적은 건물의 평균은 대표성이 낮습니다.</p>
+    <p class="hub-links" style="margin-top:10px;"><a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }} 전체 →</a> <a href="/guide/">전세가율 보는 법 →</a> <a href="{{ page.aaptUrl }}">{{ page.dong }} 아파트 실거래가 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

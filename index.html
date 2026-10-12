@@ -1,0 +1,112 @@
+---
+layout: default
+title: 우아빌라 - 빌라·오피스텔 실거래가와 전세가율 조회
+description: 전국 연립다세대(빌라)·오피스텔의 매매·전월세 실거래가를 건물별로 확인하세요. 동네별 중앙 매매가, 전세가율이 높은 건물, 최근 거래 내역을 국토교통부 공공데이터로 정리했습니다.
+---
+
+<div class="hero">
+  <h1>우아빌라 · 🏘️ 빌라·오피스텔 실거래가</h1>
+  <p>건물 이름이나 동네로 검색해 보세요 (예: 역삼동, 해운대구, 마이빌)</p>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" class="search-input"
+           placeholder="예) 역삼동, 해운대구, 건물 이름..."
+           autocomplete="off" aria-label="건물·동네 검색">
+    <button class="search-btn" onclick="doSearch()">🔍 검색</button>
+  </div>
+</div>
+
+<div class="page-with-sidebar">
+<div>
+<div id="search-results"></div>
+
+<div class="top-ad-bar">
+  {% include ad.html %}
+</div>
+
+<div class="section" style="padding-bottom:0;">
+  <div class="info-box">
+    💡 국토교통부 실거래가 신고 자료에서 <strong>빌라(연립·다세대) {{ site.data.villa_stats.villa }}곳</strong>과 <strong>오피스텔 {{ site.data.villa_stats.offi }}곳</strong>의
+    최근 3년 매매와 최근 2년 전월세 거래를 건물별로 정리했습니다. 최근 거래 반영일은 {{ site.data.villa_stats.latest }}입니다.
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">🔑 전세가율 높은 건물 확인</h2>
+  <p style="color:#374151;line-height:1.8;font-size:.93rem;margin-bottom:12px;">같은 건물·같은 전용면적의 평균 전세 보증금을 평균 매매가와 비교한 전세가율을 지역별로 확인할 수 있습니다. 전세 계약 전에 참고하세요.</p>
+  <p><a class="fr-map" href="/jeonse/" style="display:inline-block;padding:9px 14px;">전국 전세가율 높은 건물 보기 →</a></p>
+</div>
+
+<div class="section">
+  <h2 class="section-title">📍 지역별로 찾기</h2>
+  <div class="region-grid">
+    {% for d in site.data.villa_stats.do_rows %}<a href="/region/{{ d.name | uri_escape }}/" class="region-btn"><span class="region-icon">🏘️</span>{{ d.name }}
+      <div class="region-count">건물 {{ d.n }} · 빌라 {{ d.villa }} · 오피스텔 {{ d.offi }}</div></a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">🔥 거래가 많은 동네</h2>
+  <div class="chip-row">
+    {% for d in site.data.villa_stats.busy_dongs %}<a class="chip" href="{{ d.url }}">{{ d.label }}<em>{{ d.n }}</em></a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">🏷️ 거래가 많은 건물</h2>
+  <ul class="food-list">
+    {% for t in site.data.villa_stats.top_active %}<li class="food-row"><div class="fr-main"><b><a href="{{ t.url }}" style="color:inherit;">{{ t.name }}</a></b><small>{{ t.loc }} · {{ t.kind }} · {{ t.rep }}</small></div><a class="fr-map" href="{{ t.url }}">보기</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="section">
+  <h2 class="section-title">✅ 빌라·오피스텔 실거래가를 볼 때</h2>
+  <ul style="color:#374151;line-height:1.9;font-size:.93rem;padding-left:22px;">
+    <li>건물 단위 집계라 <strong>호수는 확인할 수 없고</strong>, 같은 건물이라도 층·면적·상태에 따라 가격이 다릅니다.</li>
+    <li>거래가 적은 건물의 평균은 한두 건에 좌우되므로 <strong>거래 건수</strong>를 함께 보세요.</li>
+    <li>전세가율은 선순위 근저당·다른 세입자 보증금을 반영하지 않습니다. 계약 전 <strong>등기부등본</strong>을 꼭 확인하세요.</li>
+  </ul>
+  <p style="margin-top:12px;"><a href="/guide/">전세가율 보는 법 자세히 →</a></p>
+</div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+let items = null;
+async function loadIndex() {
+  if (items) return;
+  const resp = await fetch('/search_index.json');
+  items = await resp.json();
+  items.forEach(f => { f.h = (f.n + ' ' + f.l + ' ' + f.t).toLowerCase(); });
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  const el = document.getElementById('search-results');
+  if (!q) { el.innerHTML = ''; return; }
+  el.innerHTML = '<p style="text-align:center;padding:20px;color:#6B7280;">검색 중...</p>';
+  loadIndex().then(() => {
+    const toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const results = [];
+    for (const f of items) {
+      if (toks.every(t => f.h.includes(t))) { results.push(f); if (results.length >= 40) break; }
+    }
+    if (results.length === 0) {
+      el.innerHTML = '<p style="text-align:center;padding:20px;color:#6B7280;">검색 결과가 없습니다.</p>';
+      return;
+    }
+    el.innerHTML = `<div style="max-width:960px;margin:0 auto;padding:0 20px;">
+      <p style="padding:8px 0;font-size:.9rem;color:#6B7280;">"${esc(q)}" 검색 결과 ${results.length}${results.length >= 40 ? '+' : ''}개</p>
+      <ul class="office-list">${results.map(f => `<li><a href="${f.u}"><b>${esc(f.n)}</b><small>${esc(f.t)} · ${esc(f.l)}</small></a></li>`).join('')}</ul>
+    </div>`;
+    el.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+const urlQ = new URLSearchParams(location.search).get('q');
+if (urlQ) { document.getElementById('searchInput').value = urlQ; doSearch(); }
+</script>

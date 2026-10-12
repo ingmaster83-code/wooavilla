@@ -1,0 +1,49 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/">지역별</a>
+    <span>›</span>
+    <span>{{ page.doShort }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏘️ {{ page.doShort }} 빌라·오피스텔 실거래가</h1>
+    <p>건물 {{ page.nTotal }}곳 · 중앙 매매가 {{ page.stat.median }} · 평균 전세가율 {{ page.stat.ratio }}</p>
+  </div>
+
+  <p class="summary-p">{{ page.summary }}</p>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <p style="margin:8px 0 16px;"><a class="fr-map" href="/jeonse/{{ page.doShort | uri_escape }}/" style="display:inline-block;padding:9px 14px;">🔑 {{ page.doShort }} 전세가율 높은 건물 보기 →</a></p>
+
+  <h2 class="group-title">📍 시군구별 현황</h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>시군구</th><th>건물</th><th>빌라</th><th>오피스텔</th><th>중앙 매매가</th><th>평균 전세가율</th></tr></thead>
+    <tbody>{% for sg in page.sgRows %}<tr><td><a href="/region/{{ page.doShort | uri_escape }}/{{ sg.name | uri_escape }}/">{{ sg.name }}</a></td><td>{{ sg.n }}</td><td>{{ sg.villa }}</td><td>{{ sg.offi }}</td><td>{{ sg.median }}</td><td>{{ sg.ratio }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+
+  <h2 class="group-title">🔥 거래가 많은 건물</h2>
+  <ul class="food-list">
+    {% for t in page.top %}<li class="food-row"><div class="fr-main"><b><a href="{{ t.url }}" style="color:inherit;">{{ t.name }}</a></b><small>{{ t.loc }} · {{ t.kind }} · {{ t.rep }}</small></div><a class="fr-map" href="{{ t.url }}">보기</a></li>
+    {% endfor %}
+  </ul>
+
+  <div class="tip-box">
+    <h2>{{ page.doShort }} 빌라·오피스텔 실거래가 안내</h2>
+    <p>국토교통부 연립다세대·오피스텔 실거래가 신고 자료(최근 거래 반영 {{ page.latest }})를 건물 단위로 집계했습니다. 건물별 대표 평형은 최근 3년간 거래가 가장 많은 전용면적입니다.</p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

@@ -1,0 +1,22 @@
+---
+layout: default
+title: 지역별 빌라·오피스텔 실거래가 - 시도별 매매·전세가율
+description: 시/도별 연립다세대(빌라)·오피스텔 실거래가. 서울, 경기, 부산 등 지역별 건물 수와 매매·전월세 실거래가를 확인하세요.
+---
+
+<div class="page-with-sidebar" style="margin-top:20px;">
+<div class="side-main">
+<div class="section">
+  <nav class="breadcrumb"><a href="/">홈</a> <span>›</span> <span>지역별 실거래가</span></nav>
+  <h1 style="font-size:1.6rem;font-weight:800;margin:20px 0 8px;">📍 지역별 빌라·오피스텔 실거래가</h1>
+  <p style="color:#6B7280;margin-bottom:32px;">시/도를 선택하세요</p>
+
+  <div class="region-grid">
+    {% for d in site.data.villa_stats.do_rows %}<a href="/region/{{ d.name | uri_escape }}/" class="region-btn"><span class="region-icon">🏘️</span>{{ d.name }}
+      <div class="region-count">건물 {{ d.n }} · 빌라 {{ d.villa }} · 오피스텔 {{ d.offi }}</div></a>
+    {% endfor %}
+  </div>
+</div>
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

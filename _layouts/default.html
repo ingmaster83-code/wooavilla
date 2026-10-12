@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.url == '/' %}{{ page.title }}{% elsif page.title %}{{ page.title }} | 우아빌라{% else %}우아빌라 - 빌라·오피스텔 실거래가·전세가율{% endif %}</title>
+  <meta name="description" content="{% if page.description %}{{ page.description | escape }}{% else %}{{ site.description | strip_newlines | escape }}{% endif %}">
+  <meta name="naver-site-verification" content="b6ac73dadd3db1131a14c18df25e5de5cd02e405" />
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+
+  <meta property="og:type" content="{% if page.layout == 'building' %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{% if page.url == '/' %}{{ page.title | escape }}{% elsif page.title %}{{ page.title | escape }} | 우아빌라{% else %}우아빌라 - 빌라·오피스텔 실거래가·전세가율{% endif %}">
+  <meta property="og:description" content="{% if page.description %}{{ page.description | escape }}{% else %}{{ site.description | strip_newlines | escape }}{% endif %}">
+  <meta property="og:image" content="{{ '/assets/og-image.png' | absolute_url }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="우아빌라">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZGENFSXWC"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9ZGENFSXWC');</script>
+
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6464921081676309" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="{{ '/' | relative_url }}" class="site-logo">
+      <span class="logo-icon">🏘️</span>
+      <span class="logo-text">우아빌라</span>
+    </a>
+    <nav class="header-nav">
+      <a href="{{ '/jeonse/' | relative_url }}">전세가율</a>
+      <a href="{{ '/region/' | relative_url }}">지역별</a>
+      <a href="{{ '/search/' | relative_url }}">검색</a>
+      <a href="https://wooahouse.com">WooaHouse →</a>
+    </nav>
+  </div>
+</header>
+
+<script src="{{ '/assets/js/wooa-sites-bar.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/ad-dev-placeholder.js' | relative_url }}"></script>
+
+{% unless page.layout == 'building' or page.layout == 'dong' or page.layout == 'sigungu' or page.layout == 'do' or page.layout == 'jeonse' or page.url == '/' %}
+<div class="top-ad-bar">
+  {% include ad.html %}
+</div>
+{% endunless %}
+
+<main class="site-main">
+  {{ content }}
+</main>
+<script src="{{ '/assets/js/wooa-sidebar.js' | relative_url }}"></script>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-disclaimer">
+      매매·전월세 금액은 국토교통부 연립다세대·오피스텔 실거래가 신고 자료(공공데이터포털)를 건물(법정동+지번) 단위로 집계한 것입니다. 호수·거래 당사자는 공개되지 않으며, 신고 지연·정정·해제로 실제와 다를 수 있습니다.<br>
+      전세가율은 같은 건물·같은 전용면적의 최근 24개월 평균 전세 보증금을 평균 매매가로 나눈 참고 지표이며 투자·계약 판단의 근거가 아닙니다. 계약 전 등기부등본과 선순위 보증금을 반드시 확인하세요.
+    </p>
+    <p class="footer-links">
+      <a href="https://wooahouse.com">WooaHouse</a> ·
+      <a href="https://wooaapt.wooahouse.com">우아아파트</a> ·
+      <a href="https://wooahakgun.wooahouse.com">우아학군</a> ·
+      <a href="https://wooatown.wooahouse.com">우아동네</a> ·
+      <a href="{{ '/privacy/' | relative_url }}">개인정보처리방침</a>
+    </p>
+    <p class="copyright">&copy; 2026 우아빌라 · WooaHouse. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

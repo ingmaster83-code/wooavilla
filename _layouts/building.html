@@ -1,0 +1,104 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/{{ page.dong | uri_escape }}/">{{ page.dong }}</a>
+    <span>›</span>
+    <span>{{ page.bName }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>{% if page.kind == "오피스텔" %}🏢{% else %}🏘️{% endif %} {{ page.bName }} 실거래가</h1>
+    <p>{{ page.doShort }} {{ page.sigungu }} {{ page.dong }} {{ page.jibun }} · {{ page.ht }}{% if page.by > 0 %} · {{ page.by }}년 준공{% endif %}</p>
+  </div>
+
+  <p class="summary-p">{{ page.summary }}</p>
+
+  <div class="info-box">
+    ℹ️ 국토교통부 실거래가 신고 자료를 <b>건물(법정동+지번)</b> 단위로 집계했습니다. 호수와 거래 당사자는 공개되지 않으며, 신고 지연·정정·해제로 실제와 다를 수 있습니다. (최근 거래 반영: {{ page.latest }})
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  {% if page.ratio > 0 %}
+  <div class="ratio-box ratio-{{ page.ratioLevel }}">
+    <div class="ratio-num">{{ page.ratio }}<small>%</small></div>
+    <div class="ratio-txt">
+      <b>전세가율 (전용 {{ page.ratioA }}㎡ 기준)</b>
+      {% if page.ratioLevel == "high" %}매매가 대비 전세 보증금 비율이 매우 높은 편입니다. 계약 전 등기부등본의 선순위 근저당과 전세보증보험 가입 가능 여부를 꼭 확인하세요.
+      {% elsif page.ratioLevel == "warn" %}매매가 대비 전세 보증금 비율이 높은 편입니다. 선순위 보증금과 근저당을 함께 확인하세요.
+      {% else %}최근 2년 평균 전세 보증금 ÷ 최근 2년 평균 매매가입니다. 거래 건수가 적으면 실제와 차이가 클 수 있습니다.{% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <h2 class="group-title">📊 평형별 매매·전월세 요약</h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>전용면적</th><th>매매(3년)</th><th>평균 매매가</th><th>최저~최고</th><th>전세(2년)</th><th>평균 전세</th><th>월세 보증금/월세</th><th>전세가율</th></tr></thead>
+    <tbody>{% for g in page.tgRows %}<tr><td>{{ g.a }}㎡<br><small style="color:#6B7280;">약 {{ g.py }}평형</small></td><td>{{ g.n36 }}건</td><td>{{ g.avg }}</td><td>{{ g.min }}<br>~ {{ g.max }}</td><td>{{ g.nj }}건</td><td>{{ g.avgj }}</td><td>{% if g.nw > 0 %}{{ g.nw }}건 · {{ g.avgw }}{% else %}-{% endif %}</td><td>{{ g.ratio }}</td></tr>
+    {% endfor %}{% for g in page.rentOnly %}<tr><td>{{ g.a }}㎡</td><td>-</td><td>-</td><td>-</td><td>{{ g.nj }}건</td><td>{{ g.avgj }}</td><td>{% if g.nw > 0 %}{{ g.nw }}건 · {{ g.avgw }}{% else %}-{% endif %}</td><td>-</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+
+  {% if page.tRows.size > 0 %}
+  <h2 class="group-title">🏷️ 최근 매매 실거래 <small style="font-weight:500;color:#6B7280;">(최근 3년 {{ page.n36 }}건 중 최신순)</small></h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>계약일</th><th>전용면적</th><th>층</th><th>거래금액</th></tr></thead>
+    <tbody>{% for r in page.tRows %}<tr><td>{{ r.d }}</td><td>{{ r.a }}㎡</td><td>{{ r.f }}층</td><td>{{ r.amt }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.rRows.size > 0 %}
+  <h2 class="group-title">🔑 최근 전월세 실거래 <small style="font-weight:500;color:#6B7280;">(최근 2년 {{ page.nr24 }}건 중 최신순)</small></h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>계약일</th><th>전용면적</th><th>층</th><th>구분</th><th>보증금</th><th>월세</th><th>계약</th></tr></thead>
+    <tbody>{% for r in page.rRows %}<tr><td>{{ r.d }}</td><td>{{ r.a }}㎡</td><td>{{ r.f }}층</td><td>{{ r.type }}</td><td>{{ r.dep }}</td><td>{{ r.mon }}</td><td>{{ r.c }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.yrRows.size > 1 %}
+  <h2 class="group-title">📈 연도별 평균 매매가 <small style="font-weight:500;color:#6B7280;">(전용 {{ page.yrArea }}㎡)</small></h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>연도</th><th>거래 건수</th><th>평균 매매가</th></tr></thead>
+    <tbody>{% for y in page.yrRows %}<tr><td>{{ y.y }}년</td><td>{{ y.n }}건</td><td>{{ y.avg }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+
+  {% if page.neighbors.size > 0 %}
+  <h2 class="group-title">📍 {{ page.dong }}의 다른 {{ page.kind }}·건물</h2>
+  <ul class="food-list">
+    {% for t in page.neighbors %}<li class="food-row"><div class="fr-main"><b><a href="{{ t.url }}" style="color:inherit;">{{ t.name }}</a></b><small>{{ t.kind }} · {{ t.rep }} · 전세가율 {{ t.ratio }}</small></div><a class="fr-map" href="{{ t.url }}">보기</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% include faq.html %}
+
+  <div class="tip-box">
+    <h2>전세 계약 전에 확인하세요</h2>
+    <ul>
+      <li>등기부등본에서 <strong>선순위 근저당·보증금 합계</strong>가 매매가의 몇 %인지 확인하세요. 이 페이지의 전세가율에는 선순위 채권이 반영되어 있지 않습니다.</li>
+      <li>전세보증금 반환보증(HUG·SGI 등) 가입이 가능한지 먼저 확인하고, 임대인의 세금 체납 여부도 열람하세요.</li>
+      <li>같은 건물이라도 층·향·상태에 따라 가격이 다르며, 거래가 적은 건물의 평균은 대표성이 낮습니다.</li>
+    </ul>
+    <p class="hub-links" style="margin-top:10px;"><a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/{{ page.dong | uri_escape }}/">{{ page.dong }} 빌라·오피스텔 →</a> <a href="/guide/">전세가율 보는 법 →</a> <a href="{{ page.aaptUrl }}">{{ page.dong }} 아파트 실거래가 →</a> <a href="{{ page.hakUrl }}">{{ page.sigungu }} 학군 정보 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

@@ -1,0 +1,52 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <span>{{ page.sigungu }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏘️ {{ page.doShort }} {{ page.sigungu }} 빌라·오피스텔 실거래가</h1>
+    <p>건물 {{ page.nTotal }}곳(빌라 {{ page.nVilla }} · 오피스텔 {{ page.nOffi }}) · 중앙 매매가 {{ page.stat.median }} · 평균 전세가율 {{ page.stat.ratio }}</p>
+  </div>
+
+  <p class="summary-p">{{ page.summary }}</p>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <h2 class="group-title">📍 {{ page.sigungu }} 동네별 현황</h2>
+  <div class="tbl-wrap"><table class="trade-tbl">
+    <thead><tr><th>동네</th><th>건물</th><th>빌라</th><th>오피스텔</th><th>중앙 매매가</th><th>평균 전세가율</th></tr></thead>
+    <tbody>{% for d in page.dongRows %}<tr><td>{% if d.hub %}<a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/{{ d.name | uri_escape }}/">{{ d.name }}</a>{% else %}{{ d.name }}{% endif %}</td><td>{{ d.n }}</td><td>{{ d.villa }}</td><td>{{ d.offi }}</td><td>{{ d.median }}</td><td>{{ d.ratio }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+
+  {% if page.top.size > 0 %}
+  <h2 class="group-title">🔥 {{ page.sigungu }} 거래가 많은 건물</h2>
+  <ul class="food-list">
+    {% for t in page.top %}<li class="food-row"><div class="fr-main"><b><a href="{{ t.url }}" style="color:inherit;">{{ t.name }}</a></b><small>{{ t.loc }} · {{ t.kind }} · {{ t.rep }} · 전세가율 {{ t.ratio }}</small></div><a class="fr-map" href="{{ t.url }}">보기</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% include faq.html %}
+
+  <div class="tip-box">
+    <h2>{{ page.sigungu }} 실거래가를 볼 때 확인하세요</h2>
+    <p>최근 거래 반영일은 {{ page.latest }}입니다. 신고 후 정정·해제된 거래는 반영이 늦을 수 있고, 거래가 적은 동네의 평균은 대표성이 낮습니다.</p>
+    <p class="hub-links" style="margin-top:10px;"><a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 전체 →</a> <a href="/guide/">전세가율 보는 법 →</a> <a href="https://wooaapt.wooahouse.com/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }} 아파트 실거래가 →</a> <a href="https://wooahakgun.wooahouse.com/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }} 학군 →</a></p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>

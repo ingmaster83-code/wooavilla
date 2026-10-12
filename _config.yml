@@ -1,0 +1,34 @@
+title: 우아빌라 - 빌라·오피스텔 실거래가·전세가율
+description: >-
+  전국 연립다세대(빌라)·오피스텔의 매매·전월세 실거래가를 건물별로 확인하세요.
+  동네별 중앙 매매가, 전세가율이 높은 건물, 최근 거래 내역을 국토교통부 공공데이터로 정리했습니다.
+url: "https://wooavilla.wooahouse.com"
+baseurl: ""
+lang: ko
+timezone: Asia/Seoul
+author: WooaHouse
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+plugins:
+  - jekyll-seo-tag
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - scripts/
+  - data/
+  - "*.py"
+  - "*.log"
+  - README.md
+  - .gitignore
+  - .env
+  - vendor/
+  - _rawdata/
+
+# 설계 메모: scripts/fetch_villa.py 가 국토교통부 연립다세대·오피스텔 매매/전월세 API를 시군구×월로 받아 data/cache 에 쌓고,
+# scripts/process_villa.py 가 건물(시군구+법정동+지번) 단위로 집계해 _rawdata/villa_{시도}.json 을 만든다.
+# _plugins/villa_generator.rb 가 건물(거래 많은 상위만)·동·시군구·시도·전세가율 페이지를 생성한다. 사이트맵은 40,000건씩 분할.
