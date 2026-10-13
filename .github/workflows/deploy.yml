@@ -3,10 +3,12 @@ name: Deploy Jekyll to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:         # 수동 실행 가능
+  workflow_dispatch:         # 수동 실행
+  schedule:
+    - cron: '0 18 8 * *'     # 매월 8일 18:00 UTC = 9일 새벽 3시 KST (실거래 신고 지연 30일 반영)
 
 permissions:
-  contents: read
+  contents: write            # 확정 월 이력(_rawdata/villa_hist)을 커밋하기 위해
   pages: write
   id-token: write
 
@@ -17,9 +19,33 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 실거래 이력 보강 + 최근 2개월 수집 + 건물 단위 집계
+        run: |
+          pip install requests
+          bash scripts/refresh.sh
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+
+      - name: 확정 월 이력 커밋 (새 달이 확정됐을 때만)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _rawdata/villa_hist
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: 빌라·오피스텔 실거래 이력 갱신 $(date +'%Y-%m-%d')"
+            git pull --rebase origin main
+            git push
+          fi
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

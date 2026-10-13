@@ -15,7 +15,7 @@ _rawdata/villa_{시도}.json 과 _rawdata/villa_meta.json 을 만든다.
   t: 최근 매매 [[ymd, 전용, 층, 금액]], r: 최근 전월세 [[ymd, 전용, 층, 보증금, 월세, 구분]],
   yr: 최다 거래 평형의 연도별 [[year, n, avg]]
 """
-import hashlib, json, re, sys
+import gzip, hashlib, json, re, sys
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -24,11 +24,12 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(__file__).parent.parent
 CACHE = ROOT / "data" / "cache"
 RAW = ROOT / "_rawdata"
+HIST = RAW / "villa_hist"
 TODAY = date.today()
 SGG = json.loads((ROOT / "scripts" / "sgg_names.json").read_text(encoding="utf-8"))
 
 MIN_TX = int(sys.argv[1]) if len(sys.argv) > 1 else 3   # 36개월 매매 + 24개월 전월세 합계가 이보다 적으면 페이지를 만들지 않는다
-MIN_TOTAL = 20000
+MIN_TOTAL = 60000      # 이보다 적으면 수집 실패로 보고 중단(빌드·배포 차단). 정상 약 10만 건
 
 
 def ymd_of(d):
@@ -64,16 +65,26 @@ def dedupe(rows, idx):
 
 
 def load(kind):
+    """확정 월 이력(_rawdata/villa_hist/{kind}_{ym}.json.gz) + 최근 월 캐시(data/cache/{kind}/{ym}/{sgg}.json). 이력에 있는 월은 이력을 우선한다."""
     out = defaultdict(list)     # (sgg, dong, jibun) -> rows
+    hist_months = set()
+    for f in sorted(HIST.glob(f"{kind}_*.json.gz")):
+        hist_months.add(f.name[:-8].split("_")[-1])
+        with gzip.open(f, "rt", encoding="utf-8") as fh:
+            for sgg, rows in json.load(fh).items():
+                for r in rows:
+                    if r[1] and r[2]:
+                        out[(sgg, r[1], r[2])].append(r)
     base = CACHE / kind
-    if not base.exists():
-        return out
-    for mdir in sorted(base.iterdir()):
-        for f in mdir.glob("*.json"):
-            sgg = f.stem
-            for r in json.loads(f.read_text(encoding="utf-8")):
-                if r[1] and r[2]:
-                    out[(sgg, r[1], r[2])].append(r)
+    if base.exists():
+        for mdir in sorted(base.iterdir()):
+            if mdir.name in hist_months:
+                continue
+            for f in mdir.glob("*.json"):
+                sgg = f.stem
+                for r in json.loads(f.read_text(encoding="utf-8")):
+                    if r[1] and r[2]:
+                        out[(sgg, r[1], r[2])].append(r)
     return out
 
 
@@ -209,8 +220,11 @@ def main():
     (RAW / "villa_meta.json").write_text(json.dumps({"latest": latest, "built": ymd_of(TODAY), "min_tx": MIN_TX}), encoding="utf-8")
     sz = sum(f.stat().st_size for f in RAW.glob("villa_*.json")) / 1e6
     print(f"건물 레코드 {total:,} (빌라 {stat['ok_v']:,}, 오피스텔 {stat['ok_o']:,}) / 제외(거래 적음) {stat['skip_small']:,} / 이름 대체 {stat['name_fallback']:,} / 종류 중복 병합 {stat['merged']:,} / 지역 없음 {stat['no_sgg']:,} / {sz:.1f}MB / 최근 거래일 {latest}")
-    if total < MIN_TOTAL and "--partial" not in sys.argv:
-        print(f"※ 건물이 {MIN_TOTAL:,}건 미만입니다(수집이 끝나지 않았다면 정상).")
+    if "--partial" not in sys.argv:
+        if total < MIN_TOTAL:
+            raise SystemExit(f"가공된 건물이 {total:,}건뿐입니다(최소 {MIN_TOTAL:,}). 수집 실패로 보여 중단합니다.")
+        if latest < ymd_of(TODAY - timedelta(days=60)):
+            raise SystemExit(f"최근 거래일이 {latest} 로 너무 오래됐습니다. 최근 월 수집이 비어 있는지 확인하세요.")
 
 
 if __name__ == "__main__":

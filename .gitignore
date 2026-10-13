@@ -3,7 +3,10 @@ _site/
 .jekyll-cache/
 Gemfile.lock
 
-# 수집 캐시·로그(로컬 전용, 용량 큼). 가공 결과 _rawdata/villa_*.json 만 커밋한다
+# 수집 캐시·로그(로컬 전용, 용량 큼)
 data/
+
+# 가공 산출물(빌드마다 scripts/process_villa.py 가 재생성) — 확정 월 이력 _rawdata/villa_hist/ 만 커밋한다
+_rawdata/villa_*.json
 *.pyc
 __pycache__/
