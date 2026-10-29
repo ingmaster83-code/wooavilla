@@ -248,6 +248,9 @@ module Jekyll
       data['ratioLevel'] = ratio >= 90 ? 'high' : (ratio >= 80 ? 'warn' : (ratio.positive? ? 'ok' : 'none'))
       data['neighbors'] = neighbors.map { |x| VillaGenerator.row(x) }
       data['aaptUrl'] = "https://wooaapt.wooahouse.com/region/#{b['doShort']}/#{b['sigungu']}/#{b['dong']}/"
+      data['taxLinks'] = rep ? TaxLinks.for_trade_man(rep['avg36']) : nil
+      data['taxAvg'] = rep ? VText.man(rep['avg36']) : nil
+      data['taxArea'] = rep ? "전용 #{rep['a']}㎡(약 #{rep['py']}평형)" : nil
       data['hakUrl'] = "https://wooahakgun.wooahouse.com/region/#{b['doShort']}/#{b['sigungu']}/"
 
       s = +"#{VText.eun_neun(name)} #{loc} #{b['jibun']}에 있는 #{b['ht']}"

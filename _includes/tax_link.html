@@ -1,0 +1,11 @@
+{% assign tl = page.taxLinks %}{% if tl %}
+  <div class="tip-box">
+    <h2>🧮 {{ page.bName }} 매매 시 세금·대출 계산</h2>
+    <p>{{ page.taxArea }}의 최근 3년 평균 매매가는 {{ page.taxAvg }}입니다. 이 가격대의 취득세와 대출 월 상환액을 우아세금·우아대출에서 바로 확인해 보세요.</p>
+    <p class="hub-links" style="margin-top:10px;">
+      {% if tl.acq %}<a href="{{ tl.acq.url }}">🧾 매매가 {{ tl.acq.label }} 취득세 →</a>{% endif %}
+      {% if tl.loan %} <a href="{{ tl.loan.url }}">💳 {{ tl.loan.label }} 대출 월 상환액 →</a>{% endif %}
+    </p>
+    <p style="margin-top:8px;font-size:.8rem;color:#6B7280;">대출 구간은 매매가의 약 절반을 빌린다고 가정한 예시이며, 실제 한도는 소득·LTV·DSR에 따라 달라집니다.</p>
+  </div>
+{% endif %}
